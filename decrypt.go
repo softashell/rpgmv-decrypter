@@ -56,7 +56,7 @@ func decryptFile(filePath, outPath string, key []string) error {
 		return fmt.Errorf("file is too small")
 	}
 
-	if !checkFakeHeader(&content) {
+	if !checkFakeHeader(content[:headerLen]) {
 		return fmt.Errorf("invalid header")
 	}
 
@@ -101,51 +101,15 @@ func getContents(filePath string) ([]byte, error) {
 }
 
 func writeContents(filePath string, content *[]byte) error {
-	f, err := os.Create(filePath)
+	err := ioutil.WriteFile(filePath, *content, 0644)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-
-	_, err = f.Write(*content)
-	if err != nil {
-		return err
-	}
-
-	f.Sync()
 
 	return nil
 }
 
-func getByteArray(byteArray []byte, startPos, length int) []byte {
-	// Don't allow start-values below 0
-	if startPos < 0 {
-		startPos = 0
-	}
-
-	// Check if length is to below 0 (to end of array)
-	if length < 0 {
-		length = len(byteArray) - startPos
-	}
-
-	newByteArray := make([]byte, length)
-	n := 0
-
-	for i := startPos; i < (startPos + length); i++ {
-		// Check if byte array is on the last pos and return shorter byte array if
-		if len(byteArray) <= i {
-			return getByteArray(newByteArray, 0, n)
-		}
-
-		newByteArray[n] = byteArray[i]
-		n++
-	}
-
-	return newByteArray
-}
-
-func checkFakeHeader(content *[]byte) bool {
-	header := getByteArray(*content, 0, headerLen)
+func checkFakeHeader(header []byte) bool {
 	refBytes := make([]byte, headerLen)
 	refStr := signature + version + remain
 
