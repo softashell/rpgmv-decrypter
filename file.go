@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func processFile(filePath string, decryptionKey []string) error {
+func processFile(filePath string, decryptionKey []byte) error {
 	outFile := getOutputFilePath(filePath)
 
 	err := decryptFile(filePath, outFile, decryptionKey)

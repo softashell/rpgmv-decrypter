@@ -16,10 +16,10 @@ const (
 	remain    = "0000000000"
 )
 
-func calculateKey(decryptionKey string) ([]string, error) {
+func calculateKey(decryptionKey string) ([]byte, error) {
 	var i int
 	var chunk string
-	var key []string
+	var key []byte
 
 	if len(decryptionKey)/2 != 16 {
 		return nil, fmt.Errorf("invalid key provided")
@@ -27,7 +27,12 @@ func calculateKey(decryptionKey string) ([]string, error) {
 
 	for _, n := range decryptionKey {
 		if i == 2 {
-			key = append(key, chunk)
+			num, err := strconv.ParseInt(chunk, 16, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			key = append(key, byte(num))
 
 			i = 0
 			chunk = ""
@@ -38,13 +43,18 @@ func calculateKey(decryptionKey string) ([]string, error) {
 	}
 
 	if i == 2 {
-		key = append(key, chunk)
+		num, err := strconv.ParseInt(chunk, 16, 32)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		key = append(key, byte(num))
 	}
 
 	return key, nil
 }
 
-func decryptFile(filePath, outPath string, key []string) error {
+func decryptFile(filePath, outPath string, key []byte) error {
 	start := time.Now()
 
 	content, err := getContents(filePath)
@@ -67,12 +77,7 @@ func decryptFile(filePath, outPath string, key []string) error {
 	}
 
 	for i := 0; i < headerLen; i++ {
-		num, err := strconv.ParseInt(key[i], 16, 32)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		content[i] = content[i] ^ byte(num)
+		content[i] = content[i] ^ key[i]
 	}
 
 	err = writeContents(outPath, &content)
