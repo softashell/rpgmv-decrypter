@@ -73,12 +73,3 @@ func getEncryptedFiles(wwwDir string) ([]string, error) {
 
 	return fileList, nil
 }
-
-func isEncryptedFile(ext string) bool {
-	switch ext {
-	case ".rpgmvp", ".rpgmvm", ".rpgmvo":
-		return true
-	}
-
-	return false
-}

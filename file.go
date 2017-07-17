@@ -25,6 +25,15 @@ func processFile(filePath string, decryptionKey []byte) error {
 	return nil
 }
 
+func isEncryptedFile(ext string) bool {
+	switch ext {
+	case ".rpgmvp", ".rpgmvm", ".rpgmvo":
+		return true
+	}
+
+	return false
+}
+
 func getRealExt(oldExt string) (string, error) {
 	switch strings.ToLower(oldExt) {
 	case ".rpgmvp":
