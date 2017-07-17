@@ -16,44 +16,6 @@ const (
 	remain    = "0000000000"
 )
 
-func calculateKey(decryptionKey string) ([]byte, error) {
-	var i int
-	var chunk string
-	var key []byte
-
-	if len(decryptionKey)/2 != 16 {
-		return nil, fmt.Errorf("invalid key provided")
-	}
-
-	for _, n := range decryptionKey {
-		if i == 2 {
-			num, err := strconv.ParseInt(chunk, 16, 32)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			key = append(key, byte(num))
-
-			i = 0
-			chunk = ""
-		}
-
-		i++
-		chunk += string(n)
-	}
-
-	if i == 2 {
-		num, err := strconv.ParseInt(chunk, 16, 32)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		key = append(key, byte(num))
-	}
-
-	return key, nil
-}
-
 func decryptFile(filePath, outPath string, key []byte) error {
 	start := time.Now()
 

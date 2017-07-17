@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/Jeffail/gabs"
 )
@@ -33,4 +35,42 @@ func getEncryptionKey(dataDir string) (string, error) {
 
 func removeEncryptionKey(dir string) error {
 	return nil
+}
+
+func calculateKey(decryptionKey string) ([]byte, error) {
+	var i int
+	var chunk string
+	var key []byte
+
+	if len(decryptionKey)/2 != 16 {
+		return nil, fmt.Errorf("invalid key provided")
+	}
+
+	for _, n := range decryptionKey {
+		if i == 2 {
+			num, err := strconv.ParseInt(chunk, 16, 32)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			key = append(key, byte(num))
+
+			i = 0
+			chunk = ""
+		}
+
+		i++
+		chunk += string(n)
+	}
+
+	if i == 2 {
+		num, err := strconv.ParseInt(chunk, 16, 32)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		key = append(key, byte(num))
+	}
+
+	return key, nil
 }
