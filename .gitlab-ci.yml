@@ -1,0 +1,45 @@
+image: golang:latest
+
+before_script:
+  - go-wrapper download
+
+test:
+  dependencies: []
+  script:
+    - go test -v
+
+build:win64:
+  stage: build
+  variables:
+    GOOS: windows
+    GOARCH: amd64
+  script:
+    - go build -o rpgmv-decryptor.exe
+  artifacts:
+    name: "$CI_BUILD_NAME"
+    paths:
+    - rpgmv-decryptor.exe
+
+build:linux64:
+  stage: build
+  variables:
+    GOOS: linux
+    GOARCH: amd64
+  script:
+    - go build -o rpgmv-decryptor
+  artifacts:
+    name: "$CI_BUILD_NAME"
+    paths:
+    - rpgmv-decryptor
+
+build:osx:
+  stage: build
+  variables:
+    GOOS: darwin
+    GOARCH: amd64
+  script:
+    - go build -o rpgmv-decryptor
+  artifacts:
+    name: "$CI_BUILD_NAME"
+    paths:
+    - rpgmv-decryptor
