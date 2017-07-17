@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -61,4 +62,28 @@ func getOutputFilePath(filePath string) string {
 	filePath = filepath.Join(filepath.Dir(filePath), fileName)
 
 	return filePath
+}
+
+func readFileContents(filePath string) ([]byte, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("can't open %s: %s", filePath, err)
+	}
+	defer file.Close()
+
+	bytes, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read %s: %s", filePath, err)
+	}
+
+	return bytes, nil
+}
+
+func writeFileContents(filePath string, content *[]byte) error {
+	err := ioutil.WriteFile(filePath, *content, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

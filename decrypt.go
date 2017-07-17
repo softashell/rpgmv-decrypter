@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"strconv"
 	"time"
 )
@@ -19,7 +17,7 @@ const (
 func decryptFile(filePath, outPath string, key []byte) error {
 	start := time.Now()
 
-	content, err := getContents(filePath)
+	content, err := readFileContents(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,36 +40,12 @@ func decryptFile(filePath, outPath string, key []byte) error {
 		content[i] = content[i] ^ key[i]
 	}
 
-	err = writeContents(outPath, &content)
+	err = writeFileContents(outPath, &content)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("decrypted in %s\n", time.Since(start))
-
-	return nil
-}
-
-func getContents(filePath string) ([]byte, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("can't open %s: %s", filePath, err)
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read %s: %s", filePath, err)
-	}
-
-	return bytes, nil
-}
-
-func writeContents(filePath string, content *[]byte) error {
-	err := ioutil.WriteFile(filePath, *content, 0644)
-	if err != nil {
-		return err
-	}
 
 	return nil
 }

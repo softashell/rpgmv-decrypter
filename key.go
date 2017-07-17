@@ -69,7 +69,7 @@ func removeEncryptionKey(dataDir string) error {
 	}
 
 	jsonOutput := json.Bytes()
-	err = writeContents(systemFile, &jsonOutput)
+	err = writeFileContents(systemFile, &jsonOutput)
 	if err != nil {
 		log.Println(err)
 	}
