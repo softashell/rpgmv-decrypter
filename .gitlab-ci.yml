@@ -14,11 +14,11 @@ build:win64:
     GOOS: windows
     GOARCH: amd64
   script:
-    - go build -o rpgmv-decryptor.exe
+    - go build -o rpgmv-decrypter.exe
   artifacts:
     name: "$CI_BUILD_NAME"
     paths:
-    - rpgmv-decryptor.exe
+    - rpgmv-decrypter.exe
 
 build:linux64:
   stage: build
@@ -26,11 +26,11 @@ build:linux64:
     GOOS: linux
     GOARCH: amd64
   script:
-    - go build -o rpgmv-decryptor
+    - go build -o rpgmv-decrypter
   artifacts:
     name: "$CI_BUILD_NAME"
     paths:
-    - rpgmv-decryptor
+    - rpgmv-decrypter
 
 build:osx:
   stage: build
@@ -38,8 +38,8 @@ build:osx:
     GOOS: darwin
     GOARCH: amd64
   script:
-    - go build -o rpgmv-decryptor
+    - go build -o rpgmv-decrypter
   artifacts:
     name: "$CI_BUILD_NAME"
     paths:
-    - rpgmv-decryptor
+    - rpgmv-decrypter
