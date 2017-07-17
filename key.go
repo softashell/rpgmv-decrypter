@@ -11,21 +11,34 @@ import (
 	"github.com/Jeffail/gabs"
 )
 
-func getEncryptionKey(dataDir string) (string, error) {
-	systemFile := filepath.Join(dataDir, "System.json")
-	file, err := os.Open(systemFile)
+func openJSON(filePath string) (*gabs.Container, error) {
+	file, err := os.Open(filePath)
 	if err != nil {
-		return "", fmt.Errorf("can't open %s", systemFile)
+		return nil, fmt.Errorf("can't open %s", filePath)
 	}
 	defer file.Close()
 
-	jsonBytes, err := ioutil.ReadFile(systemFile)
+	jsonBytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return "", fmt.Errorf("failed to read %s", systemFile)
+		return nil, fmt.Errorf("failed to read %s", filePath)
 	}
 
 	jsonParsed, err := gabs.ParseJSON(jsonBytes)
-	key, ok := jsonParsed.Path("encryptionKey").Data().(string)
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonParsed, nil
+}
+
+func getEncryptionKey(dataDir string) (string, error) {
+	systemFile := filepath.Join(dataDir, "System.json")
+	json, err := openJSON(systemFile)
+	if err != nil {
+		return "", err
+	}
+
+	key, ok := json.Path("encryptionKey").Data().(string)
 	if !ok {
 		return "", fmt.Errorf("failed to get encryption key")
 	}
@@ -33,7 +46,34 @@ func getEncryptionKey(dataDir string) (string, error) {
 	return key, nil
 }
 
-func removeEncryptionKey(dir string) error {
+func removeEncryptionKey(dataDir string) error {
+	systemFile := filepath.Join(dataDir, "System.json")
+	json, err := openJSON(systemFile)
+	if err != nil {
+		return err
+	}
+
+	err = json.Delete("hasEncryptedImages")
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = json.Delete("hasEncryptedAudio")
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = json.Delete("encryptionKey")
+	if err != nil {
+		log.Println(err)
+	}
+
+	jsonOutput := json.Bytes()
+	err = writeContents(systemFile, &jsonOutput)
+	if err != nil {
+		log.Println(err)
+	}
+
 	return nil
 }
 
