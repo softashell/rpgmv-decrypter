@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -11,6 +12,12 @@ func processFile(filePath string, decryptionKey []string) error {
 	outFile := getOutputFilePath(filePath)
 
 	err := decryptFile(filePath, outFile, decryptionKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Delete old encrypted file
+	err = os.Remove(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
