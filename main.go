@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("encryption key:", encryptionKey)
+	fmt.Println("encryption key:", encryptionKey)
 
 	files, err := getEncryptedFiles(wwwDir)
 	if err != nil {
