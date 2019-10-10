@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/Jeffail/gabs"
+	"github.com/Jeffail/gabs/v2"
 )
 
 func openJSON(filePath string) (*gabs.Container, error) {
