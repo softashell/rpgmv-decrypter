@@ -16,7 +16,11 @@ func main() {
 	start := time.Now()
 
 	rootDir := os.Args[1]
-	wwwDir := filepath.Join(rootDir, "www")
+	wwwDir := filepath.Join(rootDir, "www") // MV
+	if _, err := os.Stat(wwwDir); os.IsNotExist(err) {
+		wwwDir = rootDir // MZ
+	}
+
 	dataDir := filepath.Join(wwwDir, "data")
 
 	encryptionKey, err := getEncryptionKey(dataDir)

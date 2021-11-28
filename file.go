@@ -28,7 +28,9 @@ func processFile(filePath string, decryptionKey []byte) error {
 
 func isEncryptedFile(ext string) bool {
 	switch ext {
-	case ".rpgmvp", ".rpgmvm", ".rpgmvo":
+	case ".rpgmvp", ".rpgmvm", ".rpgmvo": // MV
+		return true
+	case ".png_", ".m4a_", ".ogg_": // MZ
 		return true
 	}
 
@@ -42,6 +44,12 @@ func getRealExt(oldExt string) (string, error) {
 	case ".rpgmvm":
 		return ".m4a", nil
 	case ".rpgmvo":
+		return ".ogg", nil
+	case ".png_":
+		return ".png", nil
+	case ".m4a_":
+		return ".m4a", nil
+	case ".ogg_":
 		return ".ogg", nil
 	}
 
