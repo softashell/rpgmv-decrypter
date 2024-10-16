@@ -1,0 +1,49 @@
+name: Go Build
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+env:
+  GO_VERSION: '1.20'
+jobs:
+  build-win64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Build for Windows
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: |
+          go build -o rpgmv-decrypter.exe
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: rpgmv-decrypter.exe
+          path: rpgmv-decrypter.exe
+  build-linux64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Build for Linux
+        env:
+          GOOS: linux
+          GOARCH: amd64
+        run: |
+          go build -o rpgmv-decrypter
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: rpgmv-decrypter
+          path: rpgmv-decrypter
